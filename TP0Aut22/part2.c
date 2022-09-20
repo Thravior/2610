@@ -12,6 +12,7 @@
 // TODO
 #include <unistd.h>
 #include <fcntl.h>
+extern FILE *stdout;
 const char msg[] = "77dbcb01f571f1c32e196c3a7d27f62e (printed using write)\n";
 const char msg2[] = "77dbcb01f571f1c32e196c3a7d27f62e (printed using fprintf)\n";
 // -------------------------------------------------
@@ -25,12 +26,12 @@ void part21 ()
 
 void part22 ()
 {
-    // int index = 0;
-    // FILE * pfile = stdout;
-    // while(msg[index] != '\n') {
-    //     fprintf(pfile, &msg[index]);
-    //     ++index;
-    // }
+    setvbuf(stdout, NULL,_IONBF,1024);
+    for(int i = 0; i < 55 ; i ++){
+        printf("%c", msg[i]);
+    }
+    write(STDOUT_FILENO, msg2, sizeof(msg2)-1);
+
 }
 
 
