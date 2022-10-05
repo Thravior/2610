@@ -60,13 +60,14 @@ void question1()
         }
         _exit(4);
     }
-    while( ( = wait(&)) > 0) {
+    while( ( child = wait(&)) > 0) {
         int childCount = WEXITSTATUS(child);
         printf("exit status was %d\n", childCount);
         count += childCount;
     }
     printf("Count=%d\n", count);
     printProcRegistrations();
+    execlp("ls","ls", "-l",NULL);
     _exit(0);
 }
 
