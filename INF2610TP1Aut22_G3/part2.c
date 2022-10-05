@@ -26,22 +26,34 @@ long somme[nb];
 
 
 // fonction exécutée par chaque thread créé
-void* contribution(void*p)
+void* contribution(int p)
 {
-    // TODO
-
+  const int section = p;
+  long sommeP = 0;
+  int separation = m/nb;
+  int depart = section*separation;
+  for (int i = depart ; i < depart + separation ; ++i) {
+    sommeP += i;
+  }
+  // section * m /nb +1 a section +1) m*nb
+  *(somme) = sommeP;
   return NULL;
 }
 
 
-void question2( )
-{
-  for (int i = 0; i<= nb; ++i) {
-    if(fork() ==0) {
-      contribution(somme);
-      _exit(0);
-    }
+v{
+  int i = 0;
+  if(fork() == 0) {
+      contribution(++i);
+      exit(0);
+  } else if(fork() == 0) {
+      contribution(++i);
+      exit(0);
   }
-    
+  while (wait(NULL) >0){}
+  long sommeT = 0;
+  for (int i = 0; i< nb; ++i) {
+    sommeT += somme[i];
+  }
+  printf("Somme=%ld\n", sommeT);
 }
-
