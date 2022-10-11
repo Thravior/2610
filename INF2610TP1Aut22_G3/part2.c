@@ -22,39 +22,47 @@ long somme[nb];
 // TODO
 // Si besoin, ajouter ici les directives d'inclusion
 // -------------------------------------------------
-
+#include <sys/mman.h>
 // -------------------------------------------------
-
 
 // fonction exécutée par chaque thread créé
 void* contribution(int p)
 {
-  const int section = p;
-  long sommeP = 0;
-  int separation = m/nb;
-  int depart = section*separation;
-  for (int i = depart ; i < depart + separation ; ++i) {
-    sommeP += i;
+  somme[p] = 0;
+  int base = m/nb;
+  int depart = base * p;
+  int fin = depart + base;
+  for (int n = p* base; n<((p+1)*base); ++n){
+    somme[p] += n;
   }
-  // section * m /nb +1 a section +1) m*nb
-  *(somme) = sommeP;
+  printf("Somme tableau= %ld\n", somme[p]);
+
   return NULL;
 }
 
+off_t taille = nb*sizeof(long);
+const char* nom = "test";
+void question2( )
+{
+  int fd = shm_open(nom, O_RDWR | O_CREAT, 0666); // share tableau
+  ftruncate(fd, taille);
+  long* somme = (long*) mmap(somme, taille, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0); 
+  close(fd);
 
-v{
-  int i = 0;
-  if(fork() == 0) {
-      contribution(++i);
-      exit(0);
-  } else if(fork() == 0) {
-      contribution(++i);
-      exit(0);
-  }
-  while (wait(NULL) >0){}
-  long sommeT = 0;
   for (int i = 0; i< nb; ++i) {
+    if(fork() == 0) {
+      contribution(i);
+      munmap(somme,taille);
+      _exit(0);
+    }
+  }
+
+  while(( wait(NULL)) > 0 ) {
+  }
+
+  long sommeT = 0;
+  for (int i = 0; i < nb; ++i){
     sommeT += somme[i];
   }
-  printf("Somme=%ld\n", sommeT);
+  printf("Somme= %ld\n", somme[0]);
 }
