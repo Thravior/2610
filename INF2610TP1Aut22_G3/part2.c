@@ -2,8 +2,9 @@
  * processlab - part2.c
  *
  * Ecole polytechnique de Montreal, GIGL, Automne  2022
- * vos noms, prénoms et matricules
-*/
+ * Gagnon Mathias 2115246 sec.3
+ * Poellhuber Antoine 1990157 sec. 3
+ */
 // --------------------------------------------------
 
 #include "./libprocesslab/libprocesslab.h"
