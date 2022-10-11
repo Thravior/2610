@@ -2,7 +2,8 @@
  * processlab - part1.c
  *
  * Ecole polytechnique de Montreal, GIGL, Automne  2022
- * vos noms, prénoms et matricules
+ * Gagnon, Mathias - 2115246 sec. 3
+ * Poellhuber Antoine - 1990157 sec. 3
 */
 
 #include "libprocesslab/libprocesslab.h"
@@ -12,21 +13,26 @@
 // -------------------------------------------------
 
 // -------------------------------------------------
-int count = 0;
+
 void question1()
 {
-    pid_t child;
+    int process = 0;
+    int count;
+    int rep;
     registerProc(getpid(), getppid(), 0, 0);
     if(fork() == 0) {        //1.1
         count = 1;
         registerProc(getpid(), getppid(), 1, 1);
-        if (fork() == 0){   //2.1
+        if (fork() == 0){   //1.2
             registerProc(getpid(), getppid(), 2, 1);
-            _exit(0);
+            _exit(1);
         }
-        _exit(2);
+        while(( wait(&rep)) > 0 ) {
+            count += WEXITSTATUS(rep);
+        }
+        _exit(count);
     }
-    if(fork() == 0) {        //1.2
+    if(fork() == 0) {        //2.1
         count = 1;
         registerProc(getpid(), getppid(), 1, 2);
         if (fork() == 0){   //2.2
@@ -37,37 +43,36 @@ void question1()
             registerProc(getpid(), getppid(), 2, 3);
             _exit(1);
         }
-        while( (child = wait(NULL)) > 0) {
+        while(( wait(&rep)) > 0 ) {
+            count += WEXITSTATUS(rep);
         }
-        _exit(3);
+        _exit(count);
     }
-    if(fork() == 0) {        //1.3
+    if(fork() == 0) {        //2.1
         count = 1;
         registerProc(getpid(), getppid(), 1, 3);
         if (fork() == 0){   //2.2
             registerProc(getpid(), getppid(), 2, 4);
-            _exit(0);
+            _exit(1);
         }
         if (fork() == 0){   //2.3
             registerProc(getpid(), getppid(), 2, 5);
-            _exit(0);
+            _exit(1);
         }
         if (fork() == 0){   //2.4
             registerProc(getpid(), getppid(), 2, 6);
-            _exit(0);
+            _exit(1);
         }
-        while( (child = wait(NULL)) > 0) {
+        while(( wait(&rep)) > 0 ) {
+            count += WEXITSTATUS(rep);
         }
-        _exit(4);
+        _exit(count);
     }
-    while( ( child = wait(&)) > 0) {
-        int childCount = WEXITSTATUS(child);
-        printf("exit status was %d\n", childCount);
-        count += childCount;
+    count = 0;
+    while(( wait(&rep)) > 0 ) {
+            count += WEXITSTATUS(rep);
     }
-    printf("Count=%d\n", count);
+    printf("Nombre d'enfants: %d\n", count);
     printProcRegistrations();
-    execlp("ls","ls", "-l",NULL);
-    _exit(0);
+    execlp("ls", "ls", "-l", NULL);
 }
-
